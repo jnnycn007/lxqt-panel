@@ -75,8 +75,6 @@ LXQtCpuLoad::LXQtCpuLoad(ILXQtPanelPlugin* plugin, QWidget* parent):
         perror("Error. Failed to drop privileges");
     }
 
-    m_font.setPointSizeF(8);
-
     settingsChanged();
 }
 
@@ -136,7 +134,7 @@ void LXQtCpuLoad::paintEvent ( QPaintEvent * )
     p.setPen(pen);
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    p.setFont(m_font);
+    p.setFont(font());
     QRectF r = rect();
 
     QRectF r1;

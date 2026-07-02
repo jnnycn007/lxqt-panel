@@ -78,8 +78,6 @@ private:
     int m_updateInterval;
     int m_timerID;
 
-    QFont m_font;
-
     QColor fontColor;
 };
 
