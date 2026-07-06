@@ -56,3 +56,8 @@ void LXQtNetworkMonitorPlugin::settingsChanged()
 {
     mWidget->settingsChanged();
 }
+
+void LXQtNetworkMonitorPlugin::realign()
+{
+    mWidget->realign();
+}
