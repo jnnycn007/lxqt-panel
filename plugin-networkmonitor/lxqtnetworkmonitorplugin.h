@@ -50,6 +50,7 @@ public:
 
 protected:
     virtual void settingsChanged();
+    virtual void realign();
 
 private:
     LXQtNetworkMonitor *mWidget;

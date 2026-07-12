@@ -70,8 +70,9 @@ LXQtNetworkMonitor::~LXQtNetworkMonitor() = default;
 
 void LXQtNetworkMonitor::resizeEvent(QResizeEvent *)
 {
-    m_stuff.setMinimumWidth(m_pic.width() + 2);
-    m_stuff.setMinimumHeight(m_pic.height() + 2);
+    const int size = mPlugin->panel()->iconSize();
+    m_stuff.setMinimumWidth(size + 2);
+    m_stuff.setMinimumHeight(size + 2);
 
     update();
 }
@@ -96,19 +97,19 @@ void LXQtNetworkMonitor::timerEvent(QTimerEvent * /*event*/)
         {
             if (network_stats->rx != 0 && network_stats->tx != 0)
             {
-                m_pic.load(iconName(QStringLiteral("transmit-receive")));
+                loadPixmap(QStringLiteral("transmit-receive"));
             }
             else if (network_stats->rx != 0 && network_stats->tx == 0)
             {
-                m_pic.load(iconName(QStringLiteral("receive")));
+                loadPixmap(QStringLiteral("receive"));
             }
             else if (network_stats->rx == 0 && network_stats->tx != 0)
             {
-                m_pic.load(iconName(QStringLiteral("transmit")));
+                loadPixmap(QStringLiteral("transmit"));
             }
             else
             {
-                m_pic.load(iconName(QStringLiteral("idle")));
+                loadPixmap(QStringLiteral("idle"));
             }
 
             matched = true;
@@ -121,7 +122,7 @@ void LXQtNetworkMonitor::timerEvent(QTimerEvent * /*event*/)
 
     if (!matched)
     {
-        m_pic.load(iconName(QStringLiteral("error")));
+        loadPixmap(QStringLiteral("error"));
     }
 
     update();
@@ -198,7 +199,23 @@ void LXQtNetworkMonitor::settingsChanged()
             m_interface = QString(QLatin1String(stats[0].interface_name));
     }
 
-    m_pic.load(iconName(QStringLiteral("error")));
+    loadPixmap(QStringLiteral("error"));
+}
+
+void LXQtNetworkMonitor::realign()
+{
+    if (!m_iconState.isEmpty())
+        loadPixmap(m_iconState);
+    update();
+}
+
+void LXQtNetworkMonitor::loadPixmap(const QString &state)
+{
+    m_iconState = state;
+    const int size = mPlugin->panel()->iconSize();
+    m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_stuff.setMinimumWidth(size + 2);
+    m_stuff.setMinimumHeight(size + 2);
 }
 
 QString LXQtNetworkMonitor::convertUnits(double num)

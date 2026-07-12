@@ -41,6 +41,7 @@ public:
     LXQtNetworkMonitor(ILXQtPanelPlugin *plugin, QWidget* parent = nullptr);
     ~LXQtNetworkMonitor();
     virtual void settingsChanged();
+    void realign();
 
 protected:
     void virtual timerEvent(QTimerEvent *event);
@@ -51,6 +52,7 @@ protected:
 
 private:
     static QString convertUnits(double num);
+    void loadPixmap(const QString &state);
     QString iconName(const QString& state) const
     {
         return QStringLiteral(":/images/knemo-%1-%2.png")
@@ -58,6 +60,7 @@ private:
     }
 
     QWidget m_stuff;
+    QString m_iconState;
 
     QStringList m_iconList;
 
