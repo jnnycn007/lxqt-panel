@@ -35,7 +35,6 @@
 #include <QPixmap>
 #include <QLinearGradient>
 #include <QHBoxLayout>
-#include <XdgIcon>
 
 extern "C" {
 #include <statgrab.h>
@@ -224,7 +223,7 @@ void LXQtNetworkMonitor::loadPixmap(const QString &state)
     {
         const QString themeName = QStringLiteral("network-%1").arg(state);
         if (QIcon::hasThemeIcon(themeName))
-            m_pic = XdgIcon::fromTheme(themeName).pixmap(QSize(size, size));
+            m_pic = QIcon::fromTheme(themeName).pixmap(QSize(size, size));
         else
             m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
