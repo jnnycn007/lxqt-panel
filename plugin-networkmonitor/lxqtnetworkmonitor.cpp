@@ -187,6 +187,7 @@ bool LXQtNetworkMonitor::event(QEvent *event)
 
 void LXQtNetworkMonitor::settingsChanged()
 {
+    m_preferSystemIcons = mPlugin->settings()->value(QStringLiteral("preferSystemIcons"), true).toBool();
     m_iconIndex = mPlugin->settings()->value(QStringLiteral("icon"), 1).toInt();
     m_interface = mPlugin->settings()->value(QStringLiteral("interface")).toString();
     if (m_interface.isEmpty())
@@ -201,7 +202,11 @@ void LXQtNetworkMonitor::settingsChanged()
             m_interface = QString(QLatin1String(stats[0].interface_name));
     }
 
-    loadPixmap(QStringLiteral("error"));
+    if (!m_iconState.isEmpty())
+        loadPixmap(m_iconState);
+    else
+        loadPixmap(QStringLiteral("error"));
+    update();
 }
 
 void LXQtNetworkMonitor::realign()
@@ -215,12 +220,18 @@ void LXQtNetworkMonitor::loadPixmap(const QString &state)
 {
     m_iconState = state;
     const int size = mPlugin->panel()->iconSize();
-    // Prefer FreeDesktop theme names (network-receive, …); knemo QRC is fallback only
-    const QString themeName = QStringLiteral("network-%1").arg(state);
-    if (QIcon::hasThemeIcon(themeName))
-        m_pic = XdgIcon::fromTheme(themeName).pixmap(QSize(size, size));
+    if (m_preferSystemIcons)
+    {
+        const QString themeName = QStringLiteral("network-%1").arg(state);
+        if (QIcon::hasThemeIcon(themeName))
+            m_pic = XdgIcon::fromTheme(themeName).pixmap(QSize(size, size));
+        else
+            m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
     else
+    {
         m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
     m_stuff.setMinimumWidth(size + 2);
     m_stuff.setMinimumHeight(size + 2);
 }
