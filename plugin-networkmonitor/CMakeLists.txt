@@ -20,6 +20,9 @@ set(RESOURCES
     resources.qrc
 )
 
-set(LIBRARIES ${STATGRAB_LIB})
+set(LIBRARIES
+    ${STATGRAB_LIB}
+    Qt6Xdg
+)
 
 BUILD_LXQT_PLUGIN(${PLUGIN})

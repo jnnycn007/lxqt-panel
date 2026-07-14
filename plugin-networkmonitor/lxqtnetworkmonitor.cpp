@@ -26,14 +26,16 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "lxqtnetworkmonitor.h"
-#include "lxqtnetworkmonitorconfiguration.h"
 #include "../panel/ilxqtpanelplugin.h"
+#include "../panel/pluginsettings.h"
 
 #include <QEvent>
+#include <QIcon>
 #include <QPainter>
 #include <QPixmap>
 #include <QLinearGradient>
 #include <QHBoxLayout>
+#include <XdgIcon>
 
 extern "C" {
 #include <statgrab.h>
@@ -213,7 +215,12 @@ void LXQtNetworkMonitor::loadPixmap(const QString &state)
 {
     m_iconState = state;
     const int size = mPlugin->panel()->iconSize();
-    m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    // Prefer FreeDesktop theme names (network-receive, …); knemo QRC is fallback only
+    const QString themeName = QStringLiteral("network-%1").arg(state);
+    if (QIcon::hasThemeIcon(themeName))
+        m_pic = XdgIcon::fromTheme(themeName).pixmap(QSize(size, size));
+    else
+        m_pic = QPixmap(iconName(state)).scaled(size, size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m_stuff.setMinimumWidth(size + 2);
     m_stuff.setMinimumHeight(size + 2);
 }
