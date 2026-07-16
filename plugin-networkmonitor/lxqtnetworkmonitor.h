@@ -65,6 +65,7 @@ private:
     QStringList m_iconList;
 
     int m_iconIndex;
+    bool m_preferSystemIcons = true;
 
     QString m_interface;
     QPixmap m_pic;

@@ -31,6 +31,7 @@
 
 #include <algorithm>
 
+#include <QCheckBox>
 #include <QPushButton>
 
 extern "C" {
@@ -55,6 +56,11 @@ LXQtNetworkMonitorConfiguration::LXQtNetworkMonitorConfiguration(PluginSettings 
     if (auto btn = ui->buttons->button(QDialogButtonBox::Close))
         btn->setDefault(true);
 
+    connect(ui->preferSystemIconsCB, &QCheckBox::toggled, this, [this](bool checked) {
+        ui->iconLabel->setEnabled(!checked);
+        ui->iconCB->setEnabled(!checked);
+        saveSettings();
+    });
     connect(ui->iconCB,      &QComboBox::currentIndexChanged, this, &LXQtNetworkMonitorConfiguration::saveSettings);
     connect(ui->interfaceCB, &QComboBox::currentIndexChanged, this, &LXQtNetworkMonitorConfiguration::saveSettings);
 
@@ -70,6 +76,7 @@ void LXQtNetworkMonitorConfiguration::saveSettings()
 {
     if (!mLockSettingChanges)
     {
+        settings().setValue(QStringLiteral("preferSystemIcons"), ui->preferSystemIconsCB->isChecked());
         settings().setValue(QStringLiteral("icon"), ui->iconCB->currentIndex());
         settings().setValue(QStringLiteral("interface"), ui->interfaceCB->currentText());
     }
@@ -79,6 +86,10 @@ void LXQtNetworkMonitorConfiguration::loadSettings()
 {
     mLockSettingChanges = true;
 
+    const bool preferSystemIcons = settings().value(QStringLiteral("preferSystemIcons"), true).toBool();
+    ui->preferSystemIconsCB->setChecked(preferSystemIcons);
+    ui->iconLabel->setEnabled(!preferSystemIcons);
+    ui->iconCB->setEnabled(!preferSystemIcons);
     ui->iconCB->setCurrentIndex(settings().value(QStringLiteral("icon"), 1).toInt());
 
     int count;
